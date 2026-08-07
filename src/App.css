@@ -1,0 +1,28 @@
+.pokemon-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.pokemon-card {
+  border: 1px solid #e5e5e5;
+  border-radius: 12px;
+  padding: 1rem;
+  text-align: center;
+  background: var(--poke-gray);
+}
+
+.pokemon-card h2 {
+  text-transform: capitalize;
+  margin: 0.5rem 0 0;
+}
+
+input[type='search'] {
+  width: 100%;
+  max-width: 400px;
+  padding: 0.6rem 1rem;
+  font-size: 1rem;
+  border: 2px solid var(--poke-red);
+  border-radius: 999px;
+}

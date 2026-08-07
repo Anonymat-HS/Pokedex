@@ -1,0 +1,328 @@
+:root {
+  --poke-red: #ee1515;
+  --poke-dark: #222224;
+  --poke-gray: #f0f0f0;
+  --text: #2d2d2d;
+
+  /* Palette des types de pokémon (couleurs officielles PokeAPI).
+     Chaque type a sa propre couleur, réutilisée pour le dégradé
+     de la carte ET la pastille du badge. */
+  --type-fire: #ee8130;
+  --type-water: #6390f0;
+  --type-grass: #7ac74c;
+  --type-poison: #a33ea1;
+  --type-electric: #f7d02c;
+  --type-ice: #96d9d6;
+  --type-fighting: #c22e28;
+  --type-ground: #e2bf65;
+  --type-flying: #a98ff3;
+  --type-psychic: #f95587;
+  --type-bug: #a6b91a;
+  --type-rock: #b6a136;
+  --type-ghost: #735797;
+  --type-dragon: #6f35fc;
+  --type-dark: #705746;
+  --type-steel: #b7b7ce;
+  --type-fairy: #d685ad;
+  --type-normal: #a8a77a;
+
+  font: 16px/1.5 system-ui, 'Segoe UI', Roboto, sans-serif;
+  color: var(--text);
+  background: #fff;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+}
+
+#root {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+h1,
+h2,
+h3 {
+  line-height: 1.2;
+}
+
+/* ─── Grille de la liste des pokémons ─────────────────────────────── */
+/* repeat(auto-fill, minmax(...)) : auto-fill crée autant de colonnes
+   que possible en respectant la largeur minimale de 200px.
+   - Écran large  → beaucoup de colonnes (le conteneur fait 1200px max)
+   - Écran étroit → 1 ou 2 colonnes qui s'adaptent toutes seules.
+   C'est la grille responsive demandée : aucun media query nécessaire. */
+.pokemon-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+/* ─── Carte individuelle ──────────────────────────────────────── */
+/* Dégradé de fond selon le type : chaque classe .pokemon-card--{type}
+   (ajoutée en JS à partir de pokemon.types[0]) change la variable
+   --card-color utilisée par le dégradé. Ainsi une seule règle CSS
+   gère toutes les couleurs. */
+.pokemon-card {
+  /* Dégradé en diagonale : teinte claire en haut à gauche,
+     couleur pleine du type en bas à droite → la carte "respire". */
+  background: linear-gradient(145deg, color-mix(in srgb, var(--card-color) 25%, white), var(--card-color));
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.15);
+  padding: 1rem;
+  text-align: center;
+  /* Le curseur devient une main pour signaler que la carte est cliquable. */
+  cursor: pointer;
+  /* ── Pourquoi une transition ? ──
+     Sans elle, transform/box-shadow changeraient d'un coup (brutal).
+     Avec elle, le navigateur interpole les valeurs sur 0.3s : le
+     soulèvement de la carte devient fluide. On ne transitionne QUE
+     les propriétés animées (transform + box-shadow) plutôt que `all`
+     : c'est plus précis, et ça évite d'animer des choses inutilement. */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* ── Effet au survol ──
+   translateY(-4px) : la carte se soulève vers le haut.
+   ── Pourquoi translateY plutôt que margin-top ou top ? ──
+   • margin-top : il pousserait les cartes suivantes de la grille
+     (reflow), créant un saut de mise en page.
+   • top : ne fonctionne qu'avec position: relative + il déclenche
+     aussi un reflow (layout), et l'animation est moins fluide.
+   • transform : la carte est déplacée visuellement SANS toucher au
+     flux de la grille — aucune carte voisine ne bouge. En plus,
+     transform est géré par le GPU (compositing), donc l'animation
+     reste à 60fps.
+   L'ombre s'accentue en parallèle : plus large et plus opaque
+   (0 / 0.15 → 0 / 0.3) pour donner l'impression que la carte
+   "s'éloigne" du fond. */
+.pokemon-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 24px rgb(0 0 0 / 0.3);
+}
+
+/* Le sprite doit respirer : pas de fond ni débordement. */
+.pokemon-card img {
+  width: 96px;
+  height: 96px;
+  object-fit: contain;
+  image-rendering: pixelated; /* sprites officiels en pixel art */
+}
+
+/* L'id (#001) : discret pour ne pas concurrencer le nom. */
+.pokemon-card p:first-of-type {
+  font-size: 0.85rem;
+  opacity: 0.7;
+  margin: 0.25rem 0 0;
+}
+
+.pokemon-card h2 {
+  margin: 0.5rem 0;
+}
+
+/* ─── Badges des types ────────────────────────────────────────── */
+/* Conteneur des pastilles : espace entre elles. */
+.pokemon-types {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.35rem;
+}
+
+/* Pastille de base : arrondie (border-radius: 999px → pilule),
+   fond = couleur du type (via --type), texte blanc. */
+.type-badge {
+  padding: 0.2rem 0.7rem;
+  border-radius: 999px;
+  background: var(--type);
+  color: white;
+  font-size: 0.75rem;
+  text-transform: capitalize;
+}
+
+/* Une classe par type : chaque classe pointe vers la bonne variable.
+   Sert pour --type du badge ET pour --card-color du dégradé. */
+.pokemon-card--fire   { --card-color: var(--type-fire);   }
+.pokemon-card--water  { --card-color: var(--type-water);  }
+.pokemon-card--grass  { --card-color: var(--type-grass);  }
+.pokemon-card--poison { --card-color: var(--type-poison); }
+.pokemon-card--electric { --card-color: var(--type-electric); }
+.pokemon-card--ice    { --card-color: var(--type-ice);    }
+.pokemon-card--fighting { --card-color: var(--type-fighting); }
+.pokemon-card--ground { --card-color: var(--type-ground); }
+.pokemon-card--flying { --card-color: var(--type-flying); }
+.pokemon-card--psychic { --card-color: var(--type-psychic); }
+.pokemon-card--bug    { --card-color: var(--type-bug);    }
+.pokemon-card--rock   { --card-color: var(--type-rock);   }
+.pokemon-card--ghost  { --card-color: var(--type-ghost);  }
+.pokemon-card--dragon { --card-color: var(--type-dragon); }
+.pokemon-card--dark   { --card-color: var(--type-dark);   }
+.pokemon-card--steel  { --card-color: var(--type-steel);  }
+.pokemon-card--fairy  { --card-color: var(--type-fairy);  }
+.pokemon-card--normal { --card-color: var(--type-normal); }
+
+.type-badge--fire    { --type: var(--type-fire);    }
+.type-badge--water   { --type: var(--type-water);   }
+.type-badge--grass   { --type: var(--type-grass);   }
+.type-badge--poison  { --type: var(--type-poison);  }
+.type-badge--electric { --type: var(--type-electric); }
+.type-badge--ice     { --type: var(--type-ice);     }
+.type-badge--fighting { --type: var(--type-fighting); }
+.type-badge--ground  { --type: var(--type-ground);  }
+.type-badge--flying  { --type: var(--type-flying);  }
+.type-badge--psychic { --type: var(--type-psychic); }
+.type-badge--bug     { --type: var(--type-bug);     }
+.type-badge--rock    { --type: var(--type-rock);    }
+.type-badge--ghost   { --type: var(--type-ghost);   }
+.type-badge--dragon  { --type: var(--type-dragon);  }
+.type-badge--dark    { --type: var(--type-dark);    }
+.type-badge--steel   { --type: var(--type-steel);   }
+.type-badge--fairy   { --type: var(--type-fairy);   }
+.type-badge--normal  { --type: var(--type-normal);  }
+
+/* ─── Modal (profil détaillé) ────────────────────────────────── */
+/* Overlay : fond sombre semi-transparent positionné en "fixed".
+   fixed = ancré à la fenêtre du navigateur (pas à la page), donc il
+   couvre TOUT l'écran même si on a scrollé. z-index élevé pour être
+   sûr qu'il passe par-dessus la grille. */
+.modal-overlay {
+  position: fixed;
+  inset: 0; /* équivaut à top/right/bottom/left: 0 → plein écran */
+  background: rgb(0 0 0 / 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* z-index élevé : garanti au-dessus de la grille (définie sans
+     z-index). Le .modal-content et son bouton sont des enfants de ce
+     overlay, donc ils héritent de cette position d'empilement. */
+  z-index: 100;
+}
+
+/* Contenu du modal : il reprend pokemon-card--{type} vu plus haut pour
+   la variable --card-color, et on le stylise ici.
+   ── Fond opaque ──
+   Le bug venait d'ici : le dégradé n'existait que sur .pokemon-card,
+   pas sur .modal-content → fond transparent, on voyait la grille.
+   On applique le même dégradé opaque (color-mix 25% blanc + couleur
+   pleine : aucune transparence, donc rien ne passe à travers).
+   ── Colonne verticale ──
+   display:flex + flex-direction:column empile proprement les enfants
+   (image, p, h2, badges, stats, capérités). align-items:center les
+   centre horizontalement, et gap gère l'espacement uniforme entre eux.
+   ── Taille / centrage ──
+   max-width:400px fixe une largeur raisonnable ; l'overlay est déjà en
+   flex center (align-items/justify-content) donc le modal est centré
+   au milieu de l'écran. */
+.modal-content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  background: linear-gradient(145deg, color-mix(in srgb, var(--card-color) 25%, white), var(--card-color));
+  border-radius: 20px;
+  padding: 2rem;
+  text-align: center;
+  max-width: 400px;
+  width: 90%; /* sur mobile, le modal ne déborde pas de l'écran */
+  box-shadow: 0 12px 40px rgb(0 0 0 / 0.4);
+}
+
+/* Sprite agrandi : plus grand que dans la grille (96px → 160px). */
+.modal-content img {
+  width: 160px;
+  height: 160px;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.modal-content p {
+  font-size: 0.9rem;
+  opacity: 0.8;
+  margin: 0; /* l'espacement vertical est géré par le gap de .modal-content */
+}
+
+.modal-content h2 {
+  margin: 0.25rem 0;
+}
+
+/* Bouton de fermeture : positionné en haut à droite du MODAL
+   (le modal est en position: relative, donc top/right sont relatifs
+   à .modal-content, PAS à la page). Un z-index local suffit à le
+   garder au-dessus des badges/stats qui pourraient passer derrière. */
+.modal-close {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 10;
+  border: none;
+  background: rgb(0 0 0 / 0.35);
+  color: white;
+  font-size: 1.4rem;
+  line-height: 1;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.modal-close:hover {
+  background: rgb(0 0 0 / 0.6);
+}
+
+/* ── Stats (taille / poids) ──
+   Deux colonnes côte à côte, chiffre en grand + libellé en dessous. */
+.modal-stats {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin: 1.25rem 0 0.5rem;
+}
+
+.modal-stats p {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0;
+  opacity: 1;
+}
+
+.modal-stats span {
+  font-size: 0.75rem;
+  opacity: 0.7;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ── Liste des capacités (abilities) ──
+   Petits tags arrondis, même gabarit que les badges de types mais en
+   semi-transparent pour ne pas concurrencer les couleurs des types. */
+.ability-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.35rem;
+  margin-top: 0.5rem;
+}
+
+.ability-tag {
+  padding: 0.2rem 0.7rem;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.6);
+  border: 1px solid rgb(255 255 255 / 0.8);
+  color: var(--text);
+  font-size: 0.75rem;
+}
+
+.modal-content h3 {
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0.75rem 0 0;
+}
