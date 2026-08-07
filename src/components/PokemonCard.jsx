@@ -3,53 +3,53 @@ import { useEffect, useState } from 'react'
 import { getPokemon } from '../services/pokeApi'
 import { capitalize } from '../utils/capitalize'
 
-// Ce composant reçoit un id (ex: 1) et va chercher LUI-MÊME les données
-// du pokémon correspondant sur l'API.
-// onSelect = fonction appelée quand on clique sur la carte.
+// This component receives an id (e.g. 1) and fetches the data of the
+// matching pokémon ITSELF from the API.
+// onSelect = function called when the card is clicked.
 export default function PokemonCard({ id, onSelect }) {
-  // useState sert à stocker des données qui changent dans le temps.
-  // pokemon = les données reçues de l'API (null tant qu'on n'a rien).
+  // useState is used to store data that changes over time.
+  // pokemon = data received from the API (null while we have nothing).
   const [pokemon, setPokemon] = useState(null)
-  // error = le message d'erreur éventuel (null = pas d'erreur).
+  // error = possible error message (null = no error).
   const [error, setError] = useState(null)
 
-  // useEffect déclenche du code quand le composant est monté (affiché),
-  // et à chaque fois que la valeur de [id] change.
-  // Pourquoi ici et pas dans le render ? Parce que fetch est ASYNCHRONE :
-  // on ne peut pas attendre son résultat pendant l'affichage.
-  // On lance donc la requête ici, et on met à jour l'état quand elle finit.
+  // useEffect runs code when the component is mounted (shown), and
+  // every time the value of [id] changes.
+  // Why here and not during render? Because fetch is ASYNCHRONOUS:
+  // you cannot wait for its result while painting.
+  // So the request is started here, and state is updated when it ends.
   useEffect(() => {
-    // getPokemon(id) fait le fetch vers https://pokeapi.co/api/v2/pokemon/{id}
-    // (voir services/pokeApi.js). Il renvoie une Promesse :
-    //   .then()  → exécuté si la requête réussit (data = le pokémon complet)
-    //   .catch() → exécuté si l'API ne répond pas / renvoie une erreur
+    // getPokemon(id) fetches https://pokeapi.co/api/v2/pokemon/{id}
+    // (see services/pokeApi.js). It returns a Promise:
+    //   .then()  → runs if the request succeeds (data = full pokémon)
+    //   .catch() → runs if the API is unreachable / returns an error
     getPokemon(id)
       .then((data) => setPokemon(data))
       .catch((err) => setError(err))
   }, [id])
 
-  // Tant qu'on a pas reçu de données (et pas d'erreur) : on est en chargement.
-  if (error) return <p>Erreur : {error.message}</p>
-  if (!pokemon) return <p>Chargement...</p>
+  // While we have not received data (and no error): we are loading.
+  if (error) return <p>Error: {error.message}</p>
+  if (!pokemon) return <p>Loading...</p>
 
-  // primaryType = le premier type du pokémon, utilisé pour choisir
-  // la classe CSS qui applique le dégradé de fond (ex: pokemon-card--fire).
+  // primaryType = first type of the pokémon, used to choose the CSS
+  // class applying the background gradient (e.g. pokemon-card--fire).
   const primaryType = pokemon.types[0].type.name
 
   return (
-    // onClick appelle onSelect avec le pokémon complet de la carte.
-    // Le parent (Pokedex) le stocke dans son state selectedPokemon.
+    // onClick calls onSelect with the full card pokémon.
+    // The parent (Pokedex) stores it in its selectedPokemon state.
     <article
       className={`pokemon-card pokemon-card--${primaryType}`}
       onClick={() => onSelect(pokemon)}
     >
-      {/* Le sprite (image officielle) se trouve dans sprites.front_default */}
+      {/* The sprite (official image) lives in sprites.front_default */}
       <img src={pokemon.sprites.front_default} alt={pokemon.name} />
-      {/* L'id retourné par l'API (#001, ...) */}
+      {/* The id returned by the API (#001, ...) */}
       <p># {pokemon.id}</p>
-      {/* capitalize rend le nom lisible : "bulbasaur" -> "Bulbasaur" */}
+      {/* capitalize makes the name readable: "bulbasaur" -> "Bulbasaur" */}
       <h2>{capitalize(pokemon.name)}</h2>
-      {/* Chaque type devient une pastille colorée (badge) */}
+      {/* Each type becomes a colored badge */}
       <p className="pokemon-types">
         {pokemon.types.map((t) => (
           <span key={t.type.name} className={`type-badge type-badge--${t.type.name}`}>

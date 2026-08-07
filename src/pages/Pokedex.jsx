@@ -3,43 +3,43 @@ import PokemonList from '../components/PokemonList'
 import PokemonModal from '../components/PokemonModal'
 
 function Pokedex() {
-  // selectedPokemon = le pokémon cliqué (null tant qu'on n'a rien cliqué).
+  // selectedPokemon = the clicked pokémon (null while nothing is selected).
   const [selectedPokemon, setSelectedPokemon] = useState(null)
 
-  // Cette fonction est transmise à chaque carte. Elle reçoit le pokémon
-  // cliqué et le stocke dans le state.
+  // This function is passed to every card. It receives the clicked
+  // pokémon and stores it in state.
   function handleSelect(pokemon) {
     setSelectedPokemon(pokemon)
   }
 
-  // Le modal est fermé quand on remet selectedPokemon à null.
+  // The modal is closed by setting selectedPokemon back to null.
   function closeModal() {
     setSelectedPokemon(null)
   }
 
   return (
     <section>
-      {/* Titre en deux couleurs : "Poké" en rouge Pokéball, "dex" en
-          gris foncé — on scinde le texte en deux <span> pour pouvoir
-          les colorer séparément en CSS. */}
+      {/* Title split in two colors: "Poké" in Pokéball red, "dex" in
+          dark gray — we split the text into two <span> so they can
+          be colored separately in CSS. */}
       <h1 className="pokedex-title">
         <span className="title-poke">Poké</span>
         <span className="title-dex">dex</span>
       </h1>
 
-      {/* Liste des 50 premiers pokémons */}
+      {/* List of the first 50 pokémons */}
       <PokemonList count={50} onSelect={handleSelect} />
 
-      {/* Footer : signature discret en bas de page.
-          <footer> a un rôle sémantique (pied de page) et rien ici ne
-          l'empêche d'être dans la <section> de la page. */}
+      {/* Footer: discreet signature at the bottom of the page.
+          <footer> has a semantic role (page footer) and nothing here
+          prevents it from living inside the <section>. */}
       <footer className="footer">
         <p>H.S © 2026</p>
       </footer>
 
-      {/* Le modal n'est rendu QUE si selectedPokemon n'est pas null :
-          {cond && <Comp />} → React affiche le composant si cond est vrai,
-          et rien du tout sinon. */}
+      {/* The modal is only rendered when selectedPokemon is not null:
+          {cond && <Comp />} → React renders the component when cond is
+          true, and nothing at all otherwise. */}
       {selectedPokemon && (
         <PokemonModal pokemon={selectedPokemon} onClose={closeModal} />
       )}

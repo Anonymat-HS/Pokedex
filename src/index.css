@@ -1,10 +1,10 @@
-/* ── Police du titre ──
-   @import doit être la toute première ligne du fichier (règle CSS).
-   "Bangers" est une police graphique/bande dessinée : elle évoque
-   des jeux rétro tout en restant lisible en taille normale (contrairement
-   à "Press Start 2P", trop large et illisible pour un titre courant).
-   La police du site (system-ui…) reste inchangée pour le reste :
-   seule .pokedex-title l'utilise. */
+/* ── Title font ──
+   @import must be the very first line of the file (CSS rule).
+   "Bangers" is a graphic/comic font: it evokes retro games while
+   staying readable at a normal size (unlike "Press Start 2P", too
+   wide and illegible for a regular heading).
+   The site font (system-ui…) stays unchanged everywhere else: only
+   .pokedex-title uses Bangers. */
 @import url('https://fonts.googleapis.com/css2?family=Bangers&display=swap');
 
 :root {
@@ -13,9 +13,9 @@
   --poke-gray: #f0f0f0;
   --text: #2d2d2d;
 
-  /* Palette des types de pokémon (couleurs officielles PokeAPI).
-     Chaque type a sa propre couleur, réutilisée pour le dégradé
-     de la carte ET la pastille du badge. */
+  /* Pokémon type palette (official PokeAPI colors).
+     Each type has its own color, reused for both the card gradient
+     AND the badge pill. */
   --type-fire: #ee8130;
   --type-water: #6390f0;
   --type-grass: #7ac74c;
@@ -61,40 +61,40 @@ h3 {
   line-height: 1.2;
 }
 
-/* ─── Titre "Pokédex" ──
-   Uniquement ce titre utilise Bangers (chargée via @import en haut) ;
-   h1/h2/h3 gardent la police système pour tout le reste.
-   letter-spacing: un léger espacement pour compenser le côté compact
-   de Bangers et rendre le mot plus lisible. */
+/* ─── "Pokédex" title ──
+   Only this title uses Bangers (loaded via @import at the top);
+   h1/h2/h3 keep the system font everywhere else.
+   letter-spacing: a slight spacing to compensate Bangers' compact
+   glyphs and make the word easier to read. */
 .pokedex-title {
   font-family: 'Bangers', system-ui, sans-serif;
   font-size: 3rem;
   line-height: 1;
   letter-spacing: 3px;
-  font-weight: 400; /* Bangers n'a qu'un seul graisse : 400 */
-  /* Relief du texte : ombre décalée vers le bas-droite, noir léger.
-     Deux couches ? Une seule suffit ici — trop d'ombres rend le texte
-     boueux. On reste discret pour un effet propre. */
+  font-weight: 400; /* Bangers only has one weight: 400 */
+  /* Text relief: shadow offset towards bottom-right, light black.
+     One layer is enough — too many shadows make the text muddy.
+     We stay subtle for a clean result. */
   text-shadow: 3px 3px 0 rgb(0 0 0 / 0.2);
 }
 
-/* "Poké" en rouge Pokéball (rappel du jeu officiel).
-   Accentu : "Poké" — le é est géré par l'accent saisi dans le code
-   (pas une entité HTML), donc UTF-8 fait son travail. */
+/* "Poké" in Pokéball red (nod to the official game).
+   Accent: "Poké" — the é is handled by the accent typed in the code
+   (not an HTML entity), so UTF-8 does the job. */
 .title-poke {
   color: var(--poke-red);
 }
 
-/* "dex" en gris très foncé : le "secondaire" du bloc Pokéball.
-   On n'utilise pas du noir pur pour rester plus doux à l'œil. */
+/* "dex" in very dark gray: the "secondary" of the Pokéball block.
+   We avoid pure black to stay softer on the eyes. */
 .title-dex {
   color: var(--poke-dark);
 }
 
 /* ─── Footer (signature) ──
-   Sobre : petite taille, gris discret, centré. Pas d'effet — on veut
-   juste indiquer l'auteur sans capter l'attention.
-   margin-top : un peu d'air au-dessus pour détacher le footer de la grille. */
+   Plain: small size, discreet gray, centered. No effect — we just
+   want to indicate the author without stealing attention.
+   margin-top: a little air above to separate the footer from the grid. */
 .footer {
   margin-top: 2rem;
   text-align: center;
@@ -102,77 +102,75 @@ h3 {
 
 .footer p {
   font-size: 0.8rem;
-  color: #888; /* gris moyen, discret sur fond blanc */
+  color: #888; /* mid gray, discreet on a white background */
   margin: 0;
 }
 
-/* ─── Grille de la liste des pokémons ─────────────────────────────── */
-/* repeat(auto-fill, minmax(...)) : auto-fill crée autant de colonnes
-   que possible en respectant la largeur minimale de 200px.
-   - Écran large  → beaucoup de colonnes (le conteneur fait 1200px max)
-   - Écran étroit → 1 ou 2 colonnes qui s'adaptent toutes seules.
-   C'est la grille responsive demandée : aucun media query nécessaire. */
+/* ─── Pokémon list grid ───────────────────────────────────────── */
+/* repeat(auto-fill, minmax(...)): auto-fill creates as many columns
+   as possible while respecting the 200px minimum width.
+   - Wide screen → many columns (the container is 1200px max)
+   - Narrow screen → 1 or 2 columns, adapting on their own.
+   That is the responsive grid we asked for: no media query needed. */
 .pokemon-list {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 1rem;
 }
 
-/* ─── Carte individuelle ──────────────────────────────────────── */
-/* Dégradé de fond selon le type : chaque classe .pokemon-card--{type}
-   (ajoutée en JS à partir de pokemon.types[0]) change la variable
-   --card-color utilisée par le dégradé. Ainsi une seule règle CSS
-   gère toutes les couleurs. */
+/* ─── Individual card ─────────────────────────────────────────── */
+/* Type-driven background gradient: each .pokemon-card--{type} class
+   (added in JS from pokemon.types[0]) changes the --card-color
+   variable used by the gradient. Thus a single CSS rule handles
+   all the colors. */
 .pokemon-card {
-  /* Dégradé en diagonale : teinte claire en haut à gauche,
-     couleur pleine du type en bas à droite → la carte "respire". */
+  /* Diagonal gradient: light tint top-left, full type color bottom-
+     right → the card "breathes". */
   background: linear-gradient(145deg, color-mix(in srgb, var(--card-color) 25%, white), var(--card-color));
-  /* position: relative est requis pour l'effet shine : le ::before
-     sera positionné par rapport à la carte.
-     overflow: hidden empêche la bande lumineuse de déborder hors des
-     coins arrondis pendant son animation. */
+  /* position: relative is required for the shine effect: the ::before
+     will be positioned relative to the card.
+     overflow: hidden prevents the glow band from bleeding out of the
+     rounded corners while animating. */
   position: relative;
   overflow: hidden;
-  /* Bordure transparente par défaut : elle garde toujours la même
-     épaisseur (2px) et devient colorée au survol. Sans cette bordure
-     "fantôme", le contenu sauterait quand la couleur apparaît. */
+  /* Transparent border by default: it always keeps the same
+     thickness (2px) and becomes colored on hover. Without this
+     "ghost" border, the content would jump when the color appears. */
   border: 2px solid transparent;
   border-radius: 16px;
   box-shadow: 0 4px 12px rgb(0 0 0 / 0.15);
   padding: 1rem;
   text-align: center;
-  /* Le curseur devient une main pour signaler que la carte est cliquable. */
+  /* The cursor becomes a hand to hint that the card is clickable. */
   cursor: pointer;
-  /* ── Pourquoi une transition ? ──
-     Sans elle, transform/box-shadow changeraient d'un coup (brutal).
-     Avec elle, le navigateur interpole les valeurs sur 0.3s : le
-     soulèvement de la carte devient fluide. On ne transitionne QUE
-     les propriétés animées (transform + box-shadow, +border-color)
-     plutôt que `all` : c'est plus précis, et ça évite d'animer des
-     choses inutilement. */
+  /* ── Why a transition? ──
+     Without one, transform/box-shadow would change abruptly (harsh).
+     With one, the browser interpolates the values over 0.3s: the card
+     lift becomes smooth. We only transition the animated properties
+     (transform + box-shadow + border-color) instead of `all`: it is
+     more precise, and avoids animating useless things. */
   transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
-/* ── Effet au survol ──
-   translateY(-4px) : la carte se soulève vers le haut.
-   ── Pourquoi translateY plutôt que margin-top ou top ? ──
-   • margin-top : il pousserait les cartes suivantes de la grille
-     (reflow), créant un saut de mise en page.
-   • top : ne fonctionne qu'avec position: relative + il déclenche
-     aussi un reflow (layout), et l'animation est moins fluide.
-   • transform : la carte est déplacée visuellement SANS toucher au
-     flux de la grille — aucune carte voisine ne bouge. En plus,
-     transform est géré par le GPU (compositing), donc l'animation
-     reste à 60fps.
-   L'ombre s'accentue en parallèle : plus large et plus opaque
-   (0 / 0.15 → 0 / 0.3) pour donner l'impression que la carte
-   "s'éloigne" du fond.
-   ── Bordure lumineuse ──
-   border-color: var(--card-color) : la bordure fine (2px, définie à
-   l'état normal en transparent) prend la couleur du type du pokémon.
-   Pourquoi via var(--card-color) ? Que ce soit une classe
-   pokemon-card--fire ou --water, la bonne couleur suivra automatiquement
-   le dégradé — aucune règle par type à répéter. */
+/* ── Hover effect ──
+   translateY(-4px): the card lifts up.
+   ── Why translateY instead of margin-top or top? ──
+   • margin-top: it would push the following cards in the grid
+     (reflow), causing a layout jump.
+   • top: only works with position: relative, also triggers a reflow
+     (layout), and the animation is less smooth.
+   • transform: the card moves visually WITHOUT touching the grid
+     flow — no neighboring card moves. Also, transform is GPU-driven
+     (compositing), so the animation stays at 60fps.
+   The shadow intensifies in parallel: wider and more opaque
+   (0 / 0.15 → 0 / 0.3) to feel like the card is "moving away" from
+   the background.
+   ── Glowing border ──
+   border-color: var(--card-color): the thin border (2px, defined as
+   transparent in the normal state) takes the pokémon type color.
+   Why via var(--card-color)? Whether it is a pokemon-card--fire or
+   --water class, the right color automatically follows the gradient —
+   no per-type rule to repeat. */
 .pokemon-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 10px 24px rgb(0 0 0 / 0.3);
@@ -180,16 +178,16 @@ h3 {
   background: linear-gradient(145deg, color-mix(in srgb, var(--card-color) 15%, white), var(--card-color));
 }
 
-/* ── Effet "shine" ──
-   Le ::before est une bande diagonale semi-transparente (blanc à
-   25% environ) placée par-dessus toute la carte. À l'état normal, elle
-   est entièrement décalée à gauche (translateX(-130%)) : invisible.
-   Au survol, on la translate vers la droite (X(130%)) : elle traverse
-   la carte de gauche à droite en "réfléchissant" un rayon de lumière.
-   Pourquoi un pseudo-élément ? Il évite d'ajouter un élément JSX de
-   plus et il est invisible par défaut — un vrai effet purement CSS.
-   transition sur transform : c'est la seule propriété animée, et elle
-   passe par le GPU → animation fluide. */
+/* ── "Shine" effect ──
+   The ::before is a semi-transparent diagonal band (white at ~25%)
+   laid on top of the whole card. At rest it is fully shifted to the
+   left (translateX(-130%)): invisible. On hover it moves to the right
+   (translateX(130%)): it sweeps across the card left-to-right,
+   "reflecting" a light beam.
+   Why a pseudo-element? It avoids adding an extra JSX element and is
+   hidden by default — a pure CSS effect.
+   transition on transform: it is the only animated property, and it
+   goes through the GPU → smooth animation. */
 .pokemon-card::before {
   content: '';
   position: absolute;
@@ -197,31 +195,31 @@ h3 {
   left: 0;
   width: 45%;
   height: 100%;
-  /* La bande elle-même est un léger dégradé plutôt qu'un blanc plat,
-     pour un reflet plus doux sur les bords. */
+  /* The band itself is a subtle gradient rather than a flat white,
+     for a softer reflection on the edges. */
   background: linear-gradient(to right, transparent, rgb(255 255 255 / 0.4), transparent);
   transform: translateX(-115%) rotate(10deg);
   transition: transform 0.6s ease;
-  pointer-events: none; /* la bande ne doit pas capturer les clics */
+  pointer-events: none; /* the band must not capture clicks */
 }
 
 .pokemon-card:hover::before {
   transform: translateX(300%) rotate(10deg);
 }
 
-/* Le sprite : 96px, et un drop-shadow pour qu'il se détache du fond.
-   Pourquoi drop-shadow et pas box-shadow ? box-shadow suivrait le
-   rectangle de l'image (bords droits), drop-shadow épouse les contours
-   réels du pokémon → l'ombre colle au sprite. */
+/* The sprite: 96px, with a drop-shadow so it stands out from the
+   background. Why drop-shadow and not box-shadow? box-shadow would
+   follow the image's rectangle (straight edges), drop-shadow hugs the
+   pokémon's actual silhouette → the shadow follows the sprite. */
 .pokemon-card img {
   width: 96px;
   height: 96px;
   object-fit: contain;
-  image-rendering: pixelated; /* sprites officiels en pixel art */
+  image-rendering: pixelated; /* official sprites are pixel art */
   filter: drop-shadow(0 4px 6px rgb(0 0 0 / 0.25));
 }
 
-/* L'id (#001) : discret pour ne pas concurrencer le nom. */
+/* The id (#001): subtle so it does not fight with the name. */
 .pokemon-card p:first-of-type {
   font-size: 0.85rem;
   opacity: 0.7;
@@ -232,8 +230,8 @@ h3 {
   margin: 0.5rem 0;
 }
 
-/* ─── Badges des types ────────────────────────────────────────── */
-/* Conteneur des pastilles : espace entre elles. */
+/* ─── Type badges ─────────────────────────────────────────────── */
+/* Container of the pills: spacing between them. */
 .pokemon-types {
   display: flex;
   flex-wrap: wrap;
@@ -241,8 +239,8 @@ h3 {
   gap: 0.35rem;
 }
 
-/* Pastille de base : arrondie (border-radius: 999px → pilule),
-   fond = couleur du type (via --type), texte blanc. */
+/* Base pill: rounded (border-radius: 999px → capsule), background =
+   the type color (via --type), white text. */
 .type-badge {
   padding: 0.2rem 0.7rem;
   border-radius: 999px;
@@ -252,8 +250,9 @@ h3 {
   text-transform: capitalize;
 }
 
-/* Une classe par type : chaque classe pointe vers la bonne variable.
-   Sert pour --type du badge ET pour --card-color du dégradé. */
+/* One class per type: each class points to the right variable.
+   Used for both the badge's --type and the card gradient's
+   --card-color. */
 .pokemon-card--fire   { --card-color: var(--type-fire);   }
 .pokemon-card--water  { --card-color: var(--type-water);  }
 .pokemon-card--grass  { --card-color: var(--type-grass);  }
@@ -292,39 +291,40 @@ h3 {
 .type-badge--fairy   { --type: var(--type-fairy);   }
 .type-badge--normal  { --type: var(--type-normal);  }
 
-/* ─── Modal (profil détaillé) ────────────────────────────────── */
-/* Overlay : fond sombre semi-transparent positionné en "fixed".
-   fixed = ancré à la fenêtre du navigateur (pas à la page), donc il
-   couvre TOUT l'écran même si on a scrollé. z-index élevé pour être
-   sûr qu'il passe par-dessus la grille. */
+/* ─── Modal (detailed profile) ───────────────────────────────── */
+/* Overlay: dark semi-transparent backdrop positioned "fixed".
+   fixed = anchored to the browser window (not the page), so it
+   covers the WHOLE screen even when scrolled. High z-index to be
+   sure it sits above the grid. */
 .modal-overlay {
   position: fixed;
-  inset: 0; /* équivaut à top/right/bottom/left: 0 → plein écran */
+  inset: 0; /* equivalent to top/right/bottom/left: 0 → full screen */
   background: rgb(0 0 0 / 0.6);
   display: flex;
   align-items: center;
   justify-content: center;
-  /* z-index élevé : garanti au-dessus de la grille (définie sans
-     z-index). Le .modal-content et son bouton sont des enfants de ce
-     overlay, donc ils héritent de cette position d'empilement. */
+  /* High z-index: guaranteed above the grid (which has none defined).
+     .modal-content and its close button are children of this overlay,
+     so they inherit this stacking position. */
   z-index: 100;
 }
 
-/* Contenu du modal : il reprend pokemon-card--{type} vu plus haut pour
-   la variable --card-color, et on le stylise ici.
-   ── Fond opaque ──
-   Le bug venait d'ici : le dégradé n'existait que sur .pokemon-card,
-   pas sur .modal-content → fond transparent, on voyait la grille.
-   On applique le même dégradé opaque (color-mix 25% blanc + couleur
-   pleine : aucune transparence, donc rien ne passe à travers).
-   ── Colonne verticale ──
-   display:flex + flex-direction:column empile proprement les enfants
-   (image, p, h2, badges, stats, capérités). align-items:center les
-   centre horizontalement, et gap gère l'espacement uniforme entre eux.
-   ── Taille / centrage ──
-   max-width:400px fixe une largeur raisonnable ; l'overlay est déjà en
-   flex center (align-items/justify-content) donc le modal est centré
-   au milieu de l'écran. */
+/* Modal content: it reuses pokemon-card--{type} (above) for the
+   --card-color variable, and is styled here.
+   ── Opaque background ──
+   The original bug came from here: the gradient only existed on
+   .pokemon-card, not .modal-content → transparent background, the
+   grid showed through. We apply the same opaque gradient (25% white
+   mixed + full color: no transparency, so nothing shows through).
+   ── Vertical column ──
+   display:flex + flex-direction:column stacks the children neatly
+   (image, p, h2, badges, stats, abilities). align-items:center
+   centers them horizontally, and gap handles the uniform spacing
+   between them.
+   ── Size / centering ──
+   max-width:400px sets a reasonable width; the overlay is already
+   flex-centered (align-items/justify-content) so the modal stays
+   centered in the middle of the screen. */
 .modal-content {
   position: relative;
   display: flex;
@@ -336,11 +336,11 @@ h3 {
   padding: 2rem;
   text-align: center;
   max-width: 400px;
-  width: 90%; /* sur mobile, le modal ne déborde pas de l'écran */
+  width: 90%; /* on mobile, the modal never overflows the screen */
   box-shadow: 0 12px 40px rgb(0 0 0 / 0.4);
 }
 
-/* Sprite agrandi : plus grand que dans la grille (96px → 160px). */
+/* Bigger sprite: larger than in the grid (96px → 160px). */
 .modal-content img {
   width: 160px;
   height: 160px;
@@ -351,17 +351,17 @@ h3 {
 .modal-content p {
   font-size: 0.9rem;
   opacity: 0.8;
-  margin: 0; /* l'espacement vertical est géré par le gap de .modal-content */
+  margin: 0; /* vertical spacing is handled by the .modal-content gap */
 }
 
 .modal-content h2 {
   margin: 0.25rem 0;
 }
 
-/* Bouton de fermeture : positionné en haut à droite du MODAL
-   (le modal est en position: relative, donc top/right sont relatifs
-   à .modal-content, PAS à la page). Un z-index local suffit à le
-   garder au-dessus des badges/stats qui pourraient passer derrière. */
+/* Close button: positioned at the top-right of the MODAL
+   (the modal is position: relative, so top/right are relative to
+   .modal-content, NOT the page). A local z-index keeps it above the
+   badges/stats that could potentially overlap behind it. */
 .modal-close {
   position: absolute;
   top: 0.75rem;
@@ -383,8 +383,8 @@ h3 {
   background: rgb(0 0 0 / 0.6);
 }
 
-/* ── Stats (taille / poids) ──
-   Deux colonnes côte à côte, chiffre en grand + libellé en dessous. */
+/* ── Stats (height / weight) ──
+   Two columns side by side: big number + label below. */
 .modal-stats {
   display: flex;
   justify-content: center;
@@ -406,9 +406,9 @@ h3 {
   letter-spacing: 0.05em;
 }
 
-/* ── Liste des capacités (abilities) ──
-   Petits tags arrondis, même gabarit que les badges de types mais en
-   semi-transparent pour ne pas concurrencer les couleurs des types. */
+/* ── Abilities list ──
+   Small rounded tags, same size as the type badges but semi-
+   transparent so they do not compete with the type colors. */
 .ability-list {
   display: flex;
   flex-wrap: wrap;
