@@ -73,6 +73,16 @@ h3 {
   /* Dégradé en diagonale : teinte claire en haut à gauche,
      couleur pleine du type en bas à droite → la carte "respire". */
   background: linear-gradient(145deg, color-mix(in srgb, var(--card-color) 25%, white), var(--card-color));
+  /* position: relative est requis pour l'effet shine : le ::before
+     sera positionné par rapport à la carte.
+     overflow: hidden empêche la bande lumineuse de déborder hors des
+     coins arrondis pendant son animation. */
+  position: relative;
+  overflow: hidden;
+  /* Bordure transparente par défaut : elle garde toujours la même
+     épaisseur (2px) et devient colorée au survol. Sans cette bordure
+     "fantôme", le contenu sauterait quand la couleur apparaît. */
+  border: 2px solid transparent;
   border-radius: 16px;
   box-shadow: 0 4px 12px rgb(0 0 0 / 0.15);
   padding: 1rem;
@@ -83,9 +93,10 @@ h3 {
      Sans elle, transform/box-shadow changeraient d'un coup (brutal).
      Avec elle, le navigateur interpole les valeurs sur 0.3s : le
      soulèvement de la carte devient fluide. On ne transitionne QUE
-     les propriétés animées (transform + box-shadow) plutôt que `all`
-     : c'est plus précis, et ça évite d'animer des choses inutilement. */
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+     les propriétés animées (transform + box-shadow, +border-color)
+     plutôt que `all` : c'est plus précis, et ça évite d'animer des
+     choses inutilement. */
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
 /* ── Effet au survol ──
@@ -101,18 +112,59 @@ h3 {
      reste à 60fps.
    L'ombre s'accentue en parallèle : plus large et plus opaque
    (0 / 0.15 → 0 / 0.3) pour donner l'impression que la carte
-   "s'éloigne" du fond. */
+   "s'éloigne" du fond.
+   ── Bordure lumineuse ──
+   border-color: var(--card-color) : la bordure fine (2px, définie à
+   l'état normal en transparent) prend la couleur du type du pokémon.
+   Pourquoi via var(--card-color) ? Que ce soit une classe
+   pokemon-card--fire ou --water, la bonne couleur suivra automatiquement
+   le dégradé — aucune règle par type à répéter. */
 .pokemon-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 10px 24px rgb(0 0 0 / 0.3);
+  border-color: var(--card-color);
+  background: linear-gradient(145deg, color-mix(in srgb, var(--card-color) 15%, white), var(--card-color));
 }
 
-/* Le sprite doit respirer : pas de fond ni débordement. */
+/* ── Effet "shine" ──
+   Le ::before est une bande diagonale semi-transparente (blanc à
+   25% environ) placée par-dessus toute la carte. À l'état normal, elle
+   est entièrement décalée à gauche (translateX(-130%)) : invisible.
+   Au survol, on la translate vers la droite (X(130%)) : elle traverse
+   la carte de gauche à droite en "réfléchissant" un rayon de lumière.
+   Pourquoi un pseudo-élément ? Il évite d'ajouter un élément JSX de
+   plus et il est invisible par défaut — un vrai effet purement CSS.
+   transition sur transform : c'est la seule propriété animée, et elle
+   passe par le GPU → animation fluide. */
+.pokemon-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 45%;
+  height: 100%;
+  /* La bande elle-même est un léger dégradé plutôt qu'un blanc plat,
+     pour un reflet plus doux sur les bords. */
+  background: linear-gradient(to right, transparent, rgb(255 255 255 / 0.4), transparent);
+  transform: translateX(-115%) rotate(10deg);
+  transition: transform 0.6s ease;
+  pointer-events: none; /* la bande ne doit pas capturer les clics */
+}
+
+.pokemon-card:hover::before {
+  transform: translateX(300%) rotate(10deg);
+}
+
+/* Le sprite : 96px, et un drop-shadow pour qu'il se détache du fond.
+   Pourquoi drop-shadow et pas box-shadow ? box-shadow suivrait le
+   rectangle de l'image (bords droits), drop-shadow épouse les contours
+   réels du pokémon → l'ombre colle au sprite. */
 .pokemon-card img {
   width: 96px;
   height: 96px;
   object-fit: contain;
   image-rendering: pixelated; /* sprites officiels en pixel art */
+  filter: drop-shadow(0 4px 6px rgb(0 0 0 / 0.25));
 }
 
 /* L'id (#001) : discret pour ne pas concurrencer le nom. */
