@@ -30,6 +30,13 @@ function Pokedex() {
       {/* Liste des 50 premiers pokémons */}
       <PokemonList count={50} onSelect={handleSelect} />
 
+      {/* Footer : signature discret en bas de page.
+          <footer> a un rôle sémantique (pied de page) et rien ici ne
+          l'empêche d'être dans la <section> de la page. */}
+      <footer className="footer">
+        <p>H.S © 2026</p>
+      </footer>
+
       {/* Le modal n'est rendu QUE si selectedPokemon n'est pas null :
           {cond && <Comp />} → React affiche le composant si cond est vrai,
           et rien du tout sinon. */}

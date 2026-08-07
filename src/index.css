@@ -91,6 +91,21 @@ h3 {
   color: var(--poke-dark);
 }
 
+/* ─── Footer (signature) ──
+   Sobre : petite taille, gris discret, centré. Pas d'effet — on veut
+   juste indiquer l'auteur sans capter l'attention.
+   margin-top : un peu d'air au-dessus pour détacher le footer de la grille. */
+.footer {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.footer p {
+  font-size: 0.8rem;
+  color: #888; /* gris moyen, discret sur fond blanc */
+  margin: 0;
+}
+
 /* ─── Grille de la liste des pokémons ─────────────────────────────── */
 /* repeat(auto-fill, minmax(...)) : auto-fill crée autant de colonnes
    que possible en respectant la largeur minimale de 200px.
