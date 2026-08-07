@@ -1,3 +1,12 @@
+/* ── Police du titre ──
+   @import doit être la toute première ligne du fichier (règle CSS).
+   "Bangers" est une police graphique/bande dessinée : elle évoque
+   des jeux rétro tout en restant lisible en taille normale (contrairement
+   à "Press Start 2P", trop large et illisible pour un titre courant).
+   La police du site (system-ui…) reste inchangée pour le reste :
+   seule .pokedex-title l'utilise. */
+@import url('https://fonts.googleapis.com/css2?family=Bangers&display=swap');
+
 :root {
   --poke-red: #ee1515;
   --poke-dark: #222224;
@@ -50,6 +59,36 @@ h1,
 h2,
 h3 {
   line-height: 1.2;
+}
+
+/* ─── Titre "Pokédex" ──
+   Uniquement ce titre utilise Bangers (chargée via @import en haut) ;
+   h1/h2/h3 gardent la police système pour tout le reste.
+   letter-spacing: un léger espacement pour compenser le côté compact
+   de Bangers et rendre le mot plus lisible. */
+.pokedex-title {
+  font-family: 'Bangers', system-ui, sans-serif;
+  font-size: 3rem;
+  line-height: 1;
+  letter-spacing: 3px;
+  font-weight: 400; /* Bangers n'a qu'un seul graisse : 400 */
+  /* Relief du texte : ombre décalée vers le bas-droite, noir léger.
+     Deux couches ? Une seule suffit ici — trop d'ombres rend le texte
+     boueux. On reste discret pour un effet propre. */
+  text-shadow: 3px 3px 0 rgb(0 0 0 / 0.2);
+}
+
+/* "Poké" en rouge Pokéball (rappel du jeu officiel).
+   Accentu : "Poké" — le é est géré par l'accent saisi dans le code
+   (pas une entité HTML), donc UTF-8 fait son travail. */
+.title-poke {
+  color: var(--poke-red);
+}
+
+/* "dex" en gris très foncé : le "secondaire" du bloc Pokéball.
+   On n'utilise pas du noir pur pour rester plus doux à l'œil. */
+.title-dex {
+  color: var(--poke-dark);
 }
 
 /* ─── Grille de la liste des pokémons ─────────────────────────────── */

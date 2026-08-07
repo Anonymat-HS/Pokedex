@@ -19,7 +19,13 @@ function Pokedex() {
 
   return (
     <section>
-      <h1>Pokedex</h1>
+      {/* Titre en deux couleurs : "Poké" en rouge Pokéball, "dex" en
+          gris foncé — on scinde le texte en deux <span> pour pouvoir
+          les colorer séparément en CSS. */}
+      <h1 className="pokedex-title">
+        <span className="title-poke">Poké</span>
+        <span className="title-dex">dex</span>
+      </h1>
 
       {/* Liste des 50 premiers pokémons */}
       <PokemonList count={50} onSelect={handleSelect} />
