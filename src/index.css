@@ -13,6 +13,25 @@
   --poke-gray: #f0f0f0;
   --text: #2d2d2d;
 
+  /* ── Variables de thème ──
+     Toutes les couleurs d'interface passent par ces variables :
+     le bloc :root.dark (plus bas) les redéfinit pour basculer en
+     mode sombre. --mix sert aux dégradés des cartes/modal : on y
+     mélange la couleur de type avec du blanc (clair) ou du gris
+     foncé (sombre). */
+  --bg: #fff;
+  --panel: #fff;
+  --border: #ddd;
+  --muted: #888;
+  --mix: white;
+  --card-shade: rgb(0 0 0 / 0.15);
+  --card-shade-hover: rgb(0 0 0 / 0.3);
+  --modal-shade: rgb(0 0 0 / 0.4);
+  --ability-bg: rgb(255 255 255 / 0.6);
+  --ability-border: rgb(255 255 255 / 0.8);
+  --toggle-bg: rgb(0 0 0 / 0.1);
+  --toggle-bg-hover: rgb(0 0 0 / 0.2);
+
   /* Pokémon type palette (official PokeAPI colors).
      Each type has its own color, reused for both the card gradient
      AND the badge pill. */
@@ -37,11 +56,44 @@
 
   font: 16px/1.5 system-ui, 'Segoe UI', Roboto, sans-serif;
   color: var(--text);
-  background: #fff;
+  background: var(--bg);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* ─── Mode sombre ──
+   La classe .dark est posée sur <html> (depuis Pokedex.jsx). On y
+   redéfinit les variables de thème : fond quasi noir, texte clair,
+   gris discrets. Les cartes pokémon, elles, gardent leurs couleurs
+   de type : seul --mix change (le blanc du dégradé devient un gris
+   foncé), donc les cartes restent colorées mais sans "flash".
+   La transition est globale : tout élément qui utilise une variable
+   devenue animable ici se fond en douceur au changement de thème. */
+:root.dark {
+  --bg: #17171a;
+  --panel: #232327;
+  --border: #3a3a40;
+  --muted: #9a9aa2;
+  --text: #e8e8e8;
+  --mix: #1e1e22;
+  --poke-dark: #e8e8e8;
+  --card-shade: rgb(0 0 0 / 0.5);
+  --card-shade-hover: rgb(0 0 0 / 0.7);
+  --modal-shade: rgb(0 0 0 / 0.6);
+  --ability-bg: rgb(255 255 255 / 0.12);
+  --ability-border: rgb(255 255 255 / 0.22);
+  --toggle-bg: rgb(255 255 255 / 0.12);
+  --toggle-bg-hover: rgb(255 255 255 / 0.25);
+}
+
+/* Transition douce (fond + texte) quand on bascule de thème — seules
+   ces deux propriétés sont animées pour rester léger. */
+:root,
+:root * {
+  transition: background-color 0.3s ease, color 0.3s ease,
+    border-color 0.3s ease;
 }
 
 body {
@@ -91,6 +143,41 @@ h3 {
   color: var(--poke-dark);
 }
 
+/* ─── Header + bouton de thème ────────────────────────────────── */
+/* Le header aligne le titre à gauche et le bouton à droite
+   (flex + space-between), avec align-items: center pour que le
+   bouton reste centré verticalement sur la ligne du titre. */
+.pokedex-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.pokedex-header .pokedex-title {
+  margin: 0;
+}
+
+/* Bouton rond, même gabarit que le bouton de fermeture du modal
+   (34px). Fond discret qui s'inverse selon le thème, petit lift au
+   survol pour indiquer qu'il est cliquable. */
+.theme-toggle {
+  border: none;
+  background: var(--toggle-bg);
+  font-size: 1.1rem;
+  line-height: 1;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.theme-toggle:hover {
+  background: var(--toggle-bg-hover);
+  transform: translateY(-2px);
+}
+
 /* ─── Footer (signature) ──
    Plain: small size, discreet gray, centered. No effect — we just
    want to indicate the author without stealing attention.
@@ -102,7 +189,7 @@ h3 {
 
 .footer p {
   font-size: 0.8rem;
-  color: #888; /* mid gray, discreet on a white background */
+  color: var(--muted); /* discreet gray, adapte au thème */
   margin: 0;
 }
 
@@ -117,11 +204,12 @@ h3 {
   max-width: 400px;
   padding: 0.6rem 1rem;
   font-size: 1rem;
-  border: 2px solid #ddd;
+  border: 2px solid var(--border);
   border-radius: 999px;
   margin: 1rem 0;
-  background: #fff;
+  background: var(--panel);
   transition: border-color 0.2s ease;
+  color: var(--text);
 }
 
 /* On retire l'outline par défaut (anneau bleu disgracieux) et on le
@@ -136,7 +224,7 @@ h3 {
 .empty-message {
   grid-column: 1 / -1; /* occupe toutes les colonnes de la grille */
   text-align: center;
-  color: #888;
+  color: var(--muted);
   font-style: italic;
 }
 
@@ -159,20 +247,14 @@ h3 {
    all the colors. */
 .pokemon-card {
   /* Diagonal gradient: light tint top-left, full type color bottom-
-     right → the card "breathes". */
-  background: linear-gradient(145deg, color-mix(in srgb, var(--card-color) 25%, white), var(--card-color));
-  /* position: relative is required for the shine effect: the ::before
-     will be positioned relative to the card.
-     overflow: hidden prevents the glow band from bleeding out of the
-     rounded corners while animating. */
+     right → the card "breathes". The tint is var(--mix): white in
+     light mode, dark gray in dark mode. */
+  background: linear-gradient(145deg, color-mix(in srgb, var(--card-color) 25%, var(--mix)), var(--card-color));
   position: relative;
   overflow: hidden;
-  /* Transparent border by default: it always keeps the same
-     thickness (2px) and becomes colored on hover. Without this
-     "ghost" border, the content would jump when the color appears. */
   border: 2px solid transparent;
   border-radius: 16px;
-  box-shadow: 0 4px 12px rgb(0 0 0 / 0.15);
+  box-shadow: 0 4px 12px var(--card-shade);
   padding: 1rem;
   text-align: center;
   /* The cursor becomes a hand to hint that the card is clickable. */
@@ -207,9 +289,9 @@ h3 {
    no per-type rule to repeat. */
 .pokemon-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 10px 24px rgb(0 0 0 / 0.3);
+  box-shadow: 0 10px 24px var(--card-shade-hover);
   border-color: var(--card-color);
-  background: linear-gradient(145deg, color-mix(in srgb, var(--card-color) 15%, white), var(--card-color));
+  background: linear-gradient(145deg, color-mix(in srgb, var(--card-color) 15%, var(--mix)), var(--card-color));
 }
 
 /* ── "Shine" effect ──
@@ -365,13 +447,13 @@ h3 {
   flex-direction: column;
   align-items: center;
   gap: 0.75rem;
-  background: linear-gradient(145deg, color-mix(in srgb, var(--card-color) 25%, white), var(--card-color));
+  background: linear-gradient(145deg, color-mix(in srgb, var(--card-color) 25%, var(--mix)), var(--card-color));
   border-radius: 20px;
   padding: 2rem;
   text-align: center;
   max-width: 400px;
   width: 90%; /* on mobile, the modal never overflows the screen */
-  box-shadow: 0 12px 40px rgb(0 0 0 / 0.4);
+  box-shadow: 0 12px 40px var(--modal-shade);
 }
 
 /* Bigger sprite: larger than in the grid (96px → 160px). */
@@ -454,8 +536,8 @@ h3 {
 .ability-tag {
   padding: 0.2rem 0.7rem;
   border-radius: 999px;
-  background: rgb(255 255 255 / 0.6);
-  border: 1px solid rgb(255 255 255 / 0.8);
+  background: var(--ability-bg);
+  border: 1px solid var(--ability-border);
   color: var(--text);
   font-size: 0.75rem;
 }
