@@ -5,7 +5,6 @@ import SearchBar from './SearchBar'
 import { usePokemon } from '../hooks/usePokemon'
 
 export default function PokemonList({ count = 50, onSelect }) {
-
   const { pokemons } = usePokemon(count)
 
   const [searchTerm, setSearchTerm] = useState('')
@@ -23,11 +22,12 @@ export default function PokemonList({ count = 50, onSelect }) {
     <>
       <SearchBar onSearch={setSearchTerm} />
 
-      <div className="pokemon-list">
+      <div className="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-4">
         {filtered.length === 0 ? (
-          <p className="empty-message">Aucun pokémon trouvé</p>
+          <p className="col-span-full text-center italic text-(--muted)">
+            Aucun pokémon trouvé
+          </p>
         ) : (
-
           filtered.map((p) => (
             <PokemonCard key={p.name} id={idFromUrl(p.url)} onSelect={onSelect} />
           ))

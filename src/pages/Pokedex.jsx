@@ -4,7 +4,6 @@ import PokemonModal from '../components/PokemonModal'
 import ThemeToggle from '../components/ThemeToggle'
 
 function Pokedex() {
-
   const [selectedPokemon, setSelectedPokemon] = useState(null)
 
   const [dark, setDark] = useState(() => {
@@ -28,19 +27,19 @@ function Pokedex() {
 
   return (
     <section>
-      <header className="pokedex-header">
-        <h1 className="pokedex-title">
-          <span className="title-poke">Poké</span>
-          <span className="title-dex">dex</span>
+      <header className="flex items-center justify-between gap-4">
+        <h1 className="font-bangers text-5xl leading-none tracking-[3px] [text-shadow:3px_3px_0_rgba(0,0,0,0.2)]">
+          <span className="text-(--poke-red)">Poké</span>
+          <span className="text-(--poke-dark)">dex</span>
         </h1>
 
         <ThemeToggle dark={dark} onToggle={setDark} />
       </header>
 
-      <PokemonList count={50} onSelect={handleSelect} />
+      <PokemonList count={100} onSelect={handleSelect} />
 
-      <footer className="footer">
-        <p>H.S © 2026</p>
+      <footer className="mt-8 text-center">
+        <p className="text-sm text-(--muted)">H.S © 2026</p>
       </footer>
 
       {selectedPokemon && (
