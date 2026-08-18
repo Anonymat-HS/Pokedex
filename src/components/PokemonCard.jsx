@@ -24,7 +24,7 @@ export default function PokemonCard({ id, onSelect }) {
 
   return (
     <article
-      className="card-gradient relative cursor-pointer overflow-hidden rounded-2xl border-2 border-(--card-border) p-4 text-center shadow-[0_4px_12px_var(--card-shade)] transition-[transform,box-shadow,border-color] duration-300 before:pointer-events-none before:absolute before:left-0 before:top-0 before:h-full before:w-[45%] before:rotate-[10deg] before:translate-x-[-115%] before:bg-[linear-gradient(to_right,transparent,rgba(255,255,255,0.4),transparent)] before:transition-transform before:duration-[600ms] hover:-translate-y-1 hover:border-(--card-color) hover:shadow-[0_10px_24px_var(--card-shade-hover)] hover:card-gradient-hover hover:before:translate-x-[300%]"
+      className="card-gradient relative cursor-pointer overflow-hidden rounded-2xl border-2 border-(--card-border) p-4 text-center shadow-[0_4px_12px_var(--card-shade)] transition-[transform,box-shadow,border-color] duration-300 before:pointer-events-none before:absolute before:left-0 before:top-0 before:h-full before:w-[45%] before:rotate-10 before:translate-x-[-115%] before:bg-[linear-gradient(to_right,transparent,rgba(255,255,255,0.4),transparent)] before:transition-transform before:duration-600 hover:-translate-y-1 hover:border-(--card-color) hover:shadow-[0_10px_24px_var(--card-shade-hover)] hover:card-gradient-hover hover:before:translate-x-[300%]"
       style={{ '--card-color': TYPE_COLORS[primaryType] }}
       onClick={() => onSelect(pokemon)}
     >
